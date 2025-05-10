@@ -1,0 +1,20 @@
+Hello! This project is basically a 2D platformer game based on NES mario
+released in 1985 by Nintendo. The main library this project uses is LibGDX,
+which is basically a low level game engine that can be used in Java. For example,
+one of the options you can enable with LibGDX is Box2D which manages all of the
+physics in your game. Additionally, it handles all of the rendering and shaders.
+Basically, it has all of these features so that you can focus on making your game.
+One of the things that comes with LibGDX is batching. I also had created my own
+Batch class in my other Mario Project. Basically, how batching words is that it basically
+groups smaller draw operations into 1 big draw call to the GPU. We want to do this because if
+we make a bunch of individual draw calls to the GPU, that would be incredible slow (something
+you can test with my other project). Batching allows us to draw things very efficiently and quickly.
+Batching has a runtime of n, where n is the number of batch draw calls per frame. Not incorporated into this project
+but rather into my other project is a Hash Map which is kind of similar to a hash table. The point of using a hash map for
+my other project was to access textures and shaders (which can be really big) quickly and also store them as a reference (address).
+The run times for a hash map on average is constant time for inserting and looking up. The hash map uses a hash function
+on a given string to get an index. Them you use that index to index into an array and store something there. in the worst
+case scenario, it would be a big o of n (or big o of log n if there is some method used to improve run time) because
+of collisions. Although not implemented into this specific project, I thought I would share since it is something I learned
+from my previous project.
+
