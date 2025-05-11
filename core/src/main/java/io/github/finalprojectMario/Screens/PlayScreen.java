@@ -3,9 +3,11 @@ package io.github.finalprojectMario.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -19,13 +21,16 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.finalprojectMario.Main;
 import io.github.finalprojectMario.Scenes.Hud;
+import io.github.finalprojectMario.Sprites.Goomba;
 import io.github.finalprojectMario.Sprites.Mario;
 import io.github.finalprojectMario.Tools.B2WorldCreator;
+import io.github.finalprojectMario.Tools.WorldContactListener;
 
 import static io.github.finalprojectMario.Main.PPM;
 
 public class PlayScreen implements Screen {
     private Main game;
+    private TextureAtlas atlas;
 
     private OrthographicCamera gameCam;
     private Viewport gamePort;
@@ -39,10 +44,15 @@ public class PlayScreen implements Screen {
     private World world;
     private Box2DDebugRenderer b2dr;
 
+    // Sprites
     private Mario player;
+    private Goomba goomba;
+
+    private Music music;
 
 
     public PlayScreen(Main game){
+        atlas = new TextureAtlas("assets/Mario_and_Enemies.pack");
         this.game = game;
         // Create a camera used to follow mario through the camera world
         gameCam = new OrthographicCamera();
@@ -61,10 +71,23 @@ public class PlayScreen implements Screen {
         world = new World(new Vector2(0,-10), true);
         b2dr = new Box2DDebugRenderer();
 
-        new B2WorldCreator(world, map);
+        new B2WorldCreator(this);
         // Creating mario in our game world
-        player = new Mario(world);
+        player = new Mario(this);
+
+        world.setContactListener(new WorldContactListener());
+
+        music = Main.manager.get("assets/audio/music/mario_music.ogg", Music.class);
+        music.setLooping(true);
+        music.play();
+
+        goomba = new Goomba(this, .32f,.32f);
     }
+
+    public TextureAtlas getAtlas(){
+        return atlas;
+    }
+
     @Override
     public void show() {
 
@@ -89,6 +112,11 @@ public class PlayScreen implements Screen {
 
         world.step(1/60f, 6, 2);
 
+        player.update(dt);
+        goomba.update(dt);
+
+        hud.update(dt);
+
         gameCam.position.x = player.b2body.getPosition().x;
         // Keep on updating camera everytime it moves (every frame basically)
         gameCam.update();
@@ -106,6 +134,14 @@ public class PlayScreen implements Screen {
         // Render the Box2DDebugLines
         b2dr.render(world, gameCam.combined);
 
+
+        // Render mario to the screen
+        game.batch.setProjectionMatrix(gameCam.combined);
+        game.batch.begin();
+        player.draw(game.batch);
+        goomba.draw(game.batch);
+        game.batch.end();
+
         // Set our batch to now draw what the Hud camera sees
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
@@ -115,6 +151,13 @@ public class PlayScreen implements Screen {
     public void resize(int width, int height) {
         gamePort.update(width, height);
 
+    }
+    public TiledMap getMap(){
+        return map;
+    }
+
+    public World getWorld(){
+        return world;
     }
 
     @Override
