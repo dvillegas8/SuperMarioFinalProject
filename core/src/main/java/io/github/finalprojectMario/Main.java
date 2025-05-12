@@ -45,6 +45,8 @@ public class Main extends Game {
         manager.load("assets/audio/sounds/breakblock.wav", Sound.class);
         manager.load("assets/audio/sounds/powerup_spawn.wav", Sound.class);
         manager.load("assets/audio/sounds/powerup.wav", Sound.class);
+        manager.load("assets/audio/sounds/powerdown.wav", Sound.class);
+        manager.load("assets/audio/sounds/stomp.wav", Sound.class);
         // Asynchronous loading, finish loading all of the assets for now
         manager.finishLoading();
         setScreen(new PlayScreen(this));

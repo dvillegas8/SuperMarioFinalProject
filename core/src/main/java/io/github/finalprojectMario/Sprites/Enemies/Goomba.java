@@ -1,5 +1,6 @@
 package io.github.finalprojectMario.Sprites.Enemies;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -91,5 +92,6 @@ public class Goomba extends Enemy {
     @Override
     public void hitOnHead() {
         setToDestroy = true;
+        Main.manager.get("assets/audio/sounds/stomp.wav", Sound.class).play();
     }
 }

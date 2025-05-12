@@ -30,6 +30,7 @@ public class Mario extends Sprite {
     private boolean marioIsBig;
     private boolean runGrowAnimation;
     private boolean timeToDefineBigMario;
+    private boolean timeToRedefineBigMario;
 
     public Mario(PlayScreen screen){
         this.world = screen.getWorld();
@@ -81,6 +82,9 @@ public class Mario extends Sprite {
         setRegion(getFrame(dt));
         if(timeToDefineBigMario){
             defineBigMario();
+        }
+        if(timeToRedefineBigMario){
+            redefineMario();
         }
     }
 
@@ -219,6 +223,46 @@ public class Mario extends Sprite {
         Above code makes it so you can destroy bricks
         It is here just in case in the future
          */
+    }
+    public void hit(){
+        if(marioIsBig){
+            marioIsBig = false;
+            timeToRedefineBigMario = true;
+            setBounds(getX(), getY(), getWidth(), getHeight() / 2);
+
+        }
+    }
+    public void redefineMario(){
+        Vector2 position = b2body.getPosition();
+        // Destroy big mario
+        world.destroyBody(b2body);
+
+        BodyDef bdef = new BodyDef();
+        bdef.position.set(position);
+        bdef.type = BodyDef.BodyType.DynamicBody;
+        b2body = world.createBody(bdef);
+
+        FixtureDef fdef = new FixtureDef();
+        CircleShape shape = new CircleShape();
+        shape.setRadius(6 / Main.PPM);
+        // Created a category bit that is mario
+        fdef.filter.categoryBits = Main.MARIO_BIT;
+        // Set the category in what he can actually collide with
+        fdef.filter.maskBits = Main.GROUND_BIT | Main.COIN_BIT | Main.BRICK_BIT | Main.ENEMY_BIT | Main.OBJECT_BIT | Main.ENEMY_HEAD_BIT | Main.ITEM_BIT;
+
+        fdef.shape = shape;
+        b2body.createFixture(fdef).setUserData(this);
+        // Mario's head for when colliding with a block
+        EdgeShape head = new EdgeShape();
+        head.set(new Vector2(-2 / Main.PPM, 6 / Main.PPM), new Vector2(2 / Main.PPM, 6 / Main.PPM));
+        fdef.filter.categoryBits = Main.MARIO_HEAD_BIT;
+        fdef.shape = head;
+        fdef.isSensor = true;
+
+        b2body.createFixture(fdef).setUserData(this);
+
+        timeToRedefineBigMario = false;
+        Main.manager.get("assets/audio/sounds/powerdown.wav", Sound.class).play();
     }
     public boolean isBig(){
         return marioIsBig;

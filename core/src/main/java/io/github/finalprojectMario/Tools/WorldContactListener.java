@@ -47,7 +47,12 @@ public class WorldContactListener implements ContactListener {
                 }
                 break;
             case Main.MARIO_BIT | Main.ENEMY_BIT:
-                System.out.println("died");
+                if(fixA.getFilterData().categoryBits == Main.MARIO_BIT){
+                    ((Mario) fixA.getUserData()).hit();
+                }
+                else{
+                    ((Mario) fixB.getUserData()).hit();
+                }
                 break;
             case Main.ENEMY_BIT | Main.ENEMY_BIT:
                 ((Enemy)fixA.getUserData()).reverseVelocity(true, false);
