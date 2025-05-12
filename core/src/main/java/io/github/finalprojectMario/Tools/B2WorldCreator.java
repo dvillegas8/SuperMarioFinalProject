@@ -10,10 +10,13 @@ import io.github.finalprojectMario.Main;
 import io.github.finalprojectMario.Screens.PlayScreen;
 import io.github.finalprojectMario.Sprites.Brick;
 import io.github.finalprojectMario.Sprites.Coin;
+import io.github.finalprojectMario.Sprites.Enemies.Enemy;
 import io.github.finalprojectMario.Sprites.Enemies.Goomba;
+import io.github.finalprojectMario.Sprites.Enemies.Turtle;
 
 public class B2WorldCreator {
     private Array<Goomba> goombas;
+    private Array<Turtle> turtles;
     public B2WorldCreator(PlayScreen screen){
         World world = screen.getWorld();
         TiledMap map = screen.getMap();
@@ -68,10 +71,24 @@ public class B2WorldCreator {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
             goombas.add(new Goomba(screen, rect.getX() / Main.PPM, rect.getY() / Main.PPM));
         }
+        turtles = new Array<Turtle>();
+        for(MapObject object: map.getLayers().get(7).getObjects().getByType(RectangleMapObject.class)){
+            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+            turtles.add(new Turtle(screen, rect.getX() / Main.PPM, rect.getY() / Main.PPM));
+        }
     }
 
     public Array<Goomba> getGoombas(){
         return goombas;
+    }
+    public Array<Turtle> getTurtles(){
+        return turtles;
+    }
+    public Array<Enemy> getEnemies(){
+        Array<Enemy> enemies = new Array<Enemy>();
+        enemies.addAll(goombas);
+        enemies.addAll(turtles);
+        return enemies;
     }
 
 }

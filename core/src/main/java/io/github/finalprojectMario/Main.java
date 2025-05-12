@@ -19,7 +19,7 @@ public class Main extends Game {
     public static final int V_HEIGHT = 208;
     // Pixels per meter (our scale)
     public static final float PPM = 100;
-
+    public static final short NOTHING_BIT = 0;
     public static final short GROUND_BIT = 1;
     public static final short MARIO_BIT = 2;
     public static final short BRICK_BIT = 4;
@@ -47,6 +47,8 @@ public class Main extends Game {
         manager.load("assets/audio/sounds/powerup.wav", Sound.class);
         manager.load("assets/audio/sounds/powerdown.wav", Sound.class);
         manager.load("assets/audio/sounds/stomp.wav", Sound.class);
+        manager.load("assets/audio/sounds/stomp.wav", Sound.class);
+        manager.load("assets/audio/sounds/mariodie.wav", Sound.class);
         // Asynchronous loading, finish loading all of the assets for now
         manager.finishLoading();
         setScreen(new PlayScreen(this));
