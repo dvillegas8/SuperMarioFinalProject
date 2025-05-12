@@ -27,6 +27,9 @@ public class Main extends Game {
     public static final short DESTROYED_BIT = 16;
     public static final short OBJECT_BIT = 32;
     public static final short ENEMY_BIT = 64;
+    public static final short ENEMY_HEAD_BIT = 128;
+    public static final short ITEM_BIT = 256;
+    public static final short MARIO_HEAD_BIT = 512;
     // Holds all of our images/textures and draws everything
     public SpriteBatch batch;
 
@@ -40,6 +43,8 @@ public class Main extends Game {
         manager.load("assets/audio/sounds/coin.wav", Sound.class);
         manager.load("assets/audio/sounds/bump.wav", Sound.class);
         manager.load("assets/audio/sounds/breakblock.wav", Sound.class);
+        manager.load("assets/audio/sounds/powerup_spawn.wav", Sound.class);
+        manager.load("assets/audio/sounds/powerup.wav", Sound.class);
         // Asynchronous loading, finish loading all of the assets for now
         manager.finishLoading();
         setScreen(new PlayScreen(this));

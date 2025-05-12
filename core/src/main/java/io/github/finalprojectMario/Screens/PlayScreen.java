@@ -6,27 +6,27 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.finalprojectMario.Main;
 import io.github.finalprojectMario.Scenes.Hud;
-import io.github.finalprojectMario.Sprites.Goomba;
+import io.github.finalprojectMario.Sprites.Enemies.Enemy;
+import io.github.finalprojectMario.Sprites.Items.Item;
+import io.github.finalprojectMario.Sprites.Items.ItemDef;
+import io.github.finalprojectMario.Sprites.Items.Mushroom;
 import io.github.finalprojectMario.Sprites.Mario;
 import io.github.finalprojectMario.Tools.B2WorldCreator;
 import io.github.finalprojectMario.Tools.WorldContactListener;
 
-import static io.github.finalprojectMario.Main.PPM;
+import java.util.PriorityQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class PlayScreen implements Screen {
     private Main game;
@@ -43,12 +43,15 @@ public class PlayScreen implements Screen {
     // Box2d variables
     private World world;
     private Box2DDebugRenderer b2dr;
+    private B2WorldCreator creator;
 
     // Sprites
     private Mario player;
-    private Goomba goomba;
 
     private Music music;
+
+    private Array<Item> items;
+    public LinkedBlockingQueue<ItemDef> itemsToSpawn;
 
 
     public PlayScreen(Main game){
@@ -71,7 +74,7 @@ public class PlayScreen implements Screen {
         world = new World(new Vector2(0,-10), true);
         b2dr = new Box2DDebugRenderer();
 
-        new B2WorldCreator(this);
+        creator = new B2WorldCreator(this);
         // Creating mario in our game world
         player = new Mario(this);
 
@@ -81,7 +84,20 @@ public class PlayScreen implements Screen {
         music.setLooping(true);
         music.play();
 
-        goomba = new Goomba(this, .32f,.32f);
+        items = new Array<Item>();
+        itemsToSpawn = new LinkedBlockingQueue<ItemDef>();
+    }
+
+    public void spawnItem(ItemDef idef){
+        itemsToSpawn.add(idef);
+    }
+    public void handleSpawningItems(){
+        if(!itemsToSpawn.isEmpty()){
+            ItemDef idef = itemsToSpawn.poll();
+            if(idef.type == Mushroom.class){
+                items.add(new Mushroom(this,idef.position.x, idef.position.y));
+            }
+        }
     }
 
     public TextureAtlas getAtlas(){
@@ -109,11 +125,22 @@ public class PlayScreen implements Screen {
 
     public void update(float dt){
         handleInput(dt);
+        handleSpawningItems();
+
 
         world.step(1/60f, 6, 2);
 
         player.update(dt);
-        goomba.update(dt);
+        for(Enemy enemy : creator.getGoombas()){
+            enemy.update(dt);
+            // Only activate goomba if mario is within a certain range
+            if(enemy.getX() < player.getX() + 224 / Main.PPM){
+                enemy.b2body.setActive(true);
+            }
+        }
+        for(Item item : items){
+            item.update(dt);
+        }
 
         hud.update(dt);
 
@@ -139,7 +166,12 @@ public class PlayScreen implements Screen {
         game.batch.setProjectionMatrix(gameCam.combined);
         game.batch.begin();
         player.draw(game.batch);
-        goomba.draw(game.batch);
+        for(Enemy enemy : creator.getGoombas()){
+            enemy.draw(game.batch);
+        }
+        for(Item item : items){
+            item.draw(game.batch);
+        }
         game.batch.end();
 
         // Set our batch to now draw what the Hud camera sees
