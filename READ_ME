@@ -22,4 +22,6 @@ Using texture coordinates, we are able to choose a specific image from that spri
 I believe LibGDX automatically does this for us where we do the draw function and it keeps track of all of the coordinates we send
 and eventually batches them and send the draw call. Since we store coordinates with the draw call, our run time is O(1).
 Additionally, once we we send the draw call/batch to the GPU, it is O(n) where n is the number of sprites.
+If you wanna see more notes about game engines, look at this doc: https://docs.google.com/document/d/1whNENwegufvtZ-DGR-E55QZ1wdYALjJGUXPpQyqoCzQ/edit?usp=sharing
+https://www.youtube.com/@BrentAureliCodes -> Link to the tutorials I followed and learned from
 
