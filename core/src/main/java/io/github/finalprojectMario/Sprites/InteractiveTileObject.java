@@ -45,6 +45,7 @@ public abstract class InteractiveTileObject {
     }
 
     public abstract void onHeadHit(Mario mario);
+    // Defines what group an object belongs to
     public void setCategoryFilter(short filterBit){
         Filter filter = new Filter();
         filter.categoryBits = filterBit;

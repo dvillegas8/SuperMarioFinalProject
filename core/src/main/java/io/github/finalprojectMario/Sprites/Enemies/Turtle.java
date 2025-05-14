@@ -75,13 +75,16 @@ public class Turtle extends Enemy{
     }
 
     public void onEnemyHit(Enemy enemy){
+        // If the enemy is a turtle
         if(enemy instanceof Turtle){
+            // If the turtle is in moving shell state and the current state of this enemy is not moving shell, it gets killed
             if(((Turtle) enemy).currentState == State.MOVING_SHELL && currentState != State.MOVING_SHELL){
                 killed();
             }
             else if(currentState == State.MOVING_SHELL && ((Turtle) enemy).currentState == State.WALKING){
                 return;
             }
+            // Allows shells to bounce off each other if both are in moving shell state
             else{
                 reverseVelocity(true, false);
             }
@@ -93,7 +96,7 @@ public class Turtle extends Enemy{
 
     public TextureRegion getFrame(float dt){
         TextureRegion region;
-
+        // States for a turtle enemy
         switch (currentState){
             case STANDING_SHELL:
 
@@ -105,6 +108,7 @@ public class Turtle extends Enemy{
                 region = walkAnimation.getKeyFrame(stateTime, true);
                 break;
         }
+        // Flip sprite depending on direction of movement
         if(velocity.x > 0 && region.isFlipX() == false){
             region.flip(true,false);
         }
@@ -119,6 +123,7 @@ public class Turtle extends Enemy{
     @Override
     public void update(float dt) {
         setRegion(getFrame(dt));
+        // Begin walking again if in standing shell after 5 seconds
         if(currentState == State.STANDING_SHELL && stateTime > 5){
             currentState = State.WALKING;
             velocity.x = 1;
@@ -126,6 +131,7 @@ public class Turtle extends Enemy{
 
         setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - 8 / Main.PPM);
         if(currentState == State.DEAD){
+            // Rotates enemy if dead
             deadRotationDegrees +=3;
             rotate(deadRotationDegrees);
             if(stateTime >5 && !destroyed){
@@ -140,11 +146,13 @@ public class Turtle extends Enemy{
 
     @Override
     public void hitOnHead(Mario mario) {
+        // If turtle is hit on head, go into standing shell state
        if(currentState != State.STANDING_SHELL){
            currentState = State.STANDING_SHELL;
            velocity.x = 0;
        }
        else{
+           // Kicks the turtle
            kick(mario.getX() <= this.getX() ? KICK_RIGHT_SPEED : KICK_LEFT_SPEED);
        }
     }

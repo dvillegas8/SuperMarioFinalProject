@@ -18,6 +18,7 @@ public class Brick extends InteractiveTileObject{
 
     @Override
     public void onHeadHit(Mario mario) {
+        // Only destroy the brick if mario is big
         if(mario.isBig()){
             setCategoryFilter(Main.DESTROYED_BIT);
             getCell().setTile(null);

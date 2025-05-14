@@ -11,6 +11,7 @@ import io.github.finalprojectMario.Sprites.Mario;
 public class WorldContactListener implements ContactListener {
     @Override
     public void beginContact(Contact contact) {
+        // Collisions between two fixtures, Ex: Mario & Goomba
         Fixture fixA = contact.getFixtureA();
         Fixture fixB = contact.getFixtureB();
 
@@ -20,7 +21,9 @@ public class WorldContactListener implements ContactListener {
         // Check collisions
         switch(cDef){
             case Main.MARIO_HEAD_BIT | Main.BRICK_BIT:
+                // Case where mario hits a coin block with his head
             case Main.MARIO_HEAD_BIT | Main.COIN_BIT:
+                // if fixA is mario's head, then fixb must be the coin
                 if(fixA.getFilterData().categoryBits == Main.MARIO_HEAD_BIT){
                     ((InteractiveTileObject) fixB.getUserData()).onHeadHit((Mario) fixA.getUserData());
                 }
@@ -28,6 +31,7 @@ public class WorldContactListener implements ContactListener {
                     ((InteractiveTileObject) fixA.getUserData()).onHeadHit((Mario) fixB.getUserData());
                 }
                 break;
+                // Case where enemy collides with mario
             case Main.ENEMY_HEAD_BIT | Main.MARIO_BIT:
                 // Check which fix is an enemy
                 if(fixA.getFilterData().categoryBits == Main.ENEMY_HEAD_BIT){
@@ -37,6 +41,7 @@ public class WorldContactListener implements ContactListener {
                     ((Enemy)fixB.getUserData()).hitOnHead((Mario) fixA.getUserData());
                 }
                 break;
+                // Case where an enemy hits an object, ex: pipe
             case Main.ENEMY_BIT | Main.OBJECT_BIT:
                 // Check for Pipe collision, if so, change velocity in the other direction
                 if(fixA.getFilterData().categoryBits == Main.ENEMY_BIT){
@@ -46,6 +51,7 @@ public class WorldContactListener implements ContactListener {
                     ((Enemy)fixB.getUserData()).reverseVelocity(true, false);
                 }
                 break;
+                // Case where mario collides with an enemy
             case Main.MARIO_BIT | Main.ENEMY_BIT:
                 if(fixA.getFilterData().categoryBits == Main.MARIO_BIT){
                     ((Mario) fixA.getUserData()).hit((Enemy)fixB.getUserData());
@@ -54,11 +60,14 @@ public class WorldContactListener implements ContactListener {
                     ((Mario) fixB.getUserData()).hit((Enemy)fixA.getUserData());
                 }
                 break;
+                // Case where enemy collides with another enemy
             case Main.ENEMY_BIT | Main.ENEMY_BIT:
                 ((Enemy)fixA.getUserData()).onEnemyHit((Enemy)fixB.getUserData());
                 ((Enemy)fixB.getUserData()).onEnemyHit((Enemy)fixA.getUserData());
                 break;
+                // Case where an item (ex: mushroom) collides with an object (ex: pipe)
             case Main.ITEM_BIT | Main.OBJECT_BIT:
+                // Reverses the item/switches direction
                 if(fixA.getFilterData().categoryBits == Main.ITEM_BIT){
                     ((Item)fixA.getUserData()).reverseVelocity(true, false);
                 }

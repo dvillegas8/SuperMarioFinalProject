@@ -36,6 +36,7 @@ public class Mushroom extends Item{
     }
 
     @Override
+    // once mario grabs the mushroom
     public void use(Mario mario) {
         destroy();
         mario.grow();

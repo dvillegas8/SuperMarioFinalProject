@@ -21,6 +21,7 @@ public class Mario extends Sprite {
     public State previousState;
     public World world;
     public Body b2body;
+    // Animations
     private TextureRegion marioStand;
     private Animation<TextureRegion> marioRun;
     private TextureRegion marioJump;
@@ -45,12 +46,13 @@ public class Mario extends Sprite {
         runningRight = true;
 
         Array<TextureRegion> frames = new Array<TextureRegion>();
-        // Running images is 1 2 and 3
+        // Get running images from sprite sheet
         for(int i = 1; i < 4; i++){
             frames.add(new TextureRegion(screen.getAtlas().findRegion("little_mario"), i * 16, 0,16, 16));
         }
         marioRun = new Animation<TextureRegion> (0.1f, frames);
         frames.clear();
+        // Get big mario running animations from sprite sheet
         for(int i = 1; i < 4; i++){
             frames.add(new TextureRegion(screen.getAtlas().findRegion("big_mario"), i * 16, 0,16, 32));
         }
@@ -64,6 +66,7 @@ public class Mario extends Sprite {
         frames.add(new TextureRegion(screen.getAtlas().findRegion("big_mario"), 0, 0,16,32));
         growMario = new Animation<TextureRegion>(0.2f, frames);
 
+        // Get texture for mario jumping
         marioJump = new TextureRegion(screen.getAtlas().findRegion("little_mario"), 80,0,16,16);
         bigMarioJump = new TextureRegion(screen.getAtlas().findRegion("big_mario"), 80,0,16,32);
 
@@ -81,20 +84,23 @@ public class Mario extends Sprite {
     }
     // Attach sprite to box2d body
     public void update(float dt){
+        // Corrects the position of mario depending if he is big or not
         if(marioIsBig){
             setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2 - 6 / Main.PPM);
         }
         else{
             setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
         }
+        // Update the sprite with mario's correct frame depending on what action he is doing
         setRegion(getFrame(dt));
+        // Check if mario big, if so, draw him
         if(timeToDefineBigMario){
             defineBigMario();
         }
         if(timeToRedefineBigMario){
             redefineMario();
         }
-        //Mario falls
+        //Mario falls/dies if he touches the void
         if (b2body.getPosition().y<0 && !marioIsDead){
             //Stop his velocity and move him back up
             b2body.setLinearVelocity(0,0);
@@ -108,6 +114,7 @@ public class Mario extends Sprite {
         currentState = getState();
 
         TextureRegion region;
+        // Finds which state mario is in and returns the corresponding texture
         switch(currentState){
             case DEAD:
                 region = marioDead;
@@ -145,7 +152,7 @@ public class Mario extends Sprite {
         previousState = currentState;
         return region;
     }
-
+    // Returns the state mario is in
     public State getState(){
         if(marioIsDead){
             return State.DEAD;
@@ -247,16 +254,20 @@ public class Mario extends Sprite {
          */
     }
     public void hit(Enemy enemy){
+        // Makes mario be able to kick a turtle in the shell state
         if(enemy instanceof Turtle && ((Turtle)enemy).getCurrentState() == Turtle.State.STANDING_SHELL){
             ((Turtle) enemy).kick(this.getX() <= enemy.getX() ? Turtle.KICK_RIGHT_SPEED : Turtle.KICK_LEFT_SPEED);
         }
         else {
+            // Returns mario to the small version
             if (marioIsBig) {
                 marioIsBig = false;
                 timeToRedefineBigMario = true;
                 setBounds(getX(), getY(), getWidth(), getHeight() / 2);
                 Main.manager.get("assets/audio/sounds/powerdown.wav", Sound.class).play();
-            } else {
+            }
+            else {
+                // Mario die's case
                 Main.manager.get("assets/audio/music/mario_music.ogg", Music.class).stop();
                 Main.manager.get("assets/audio/sounds/mariodie.wav", Sound.class).play();
                 marioIsDead = true;
@@ -265,11 +276,13 @@ public class Mario extends Sprite {
                 for (Fixture fixture : b2body.getFixtureList()) {
                     fixture.setFilterData(filter);
                 }
+                // Makes mario jump a little after he gets hit and dies
                 b2body.applyLinearImpulse(new Vector2(0, 4f), b2body.getWorldCenter(), true);
             }
         }
     }
     public void jump(){
+        // Need this condition so that mario cant fly
         if ( currentState != State.JUMPING ) {
             b2body.applyLinearImpulse(new Vector2(0, 4f), b2body.getWorldCenter(), true);
             currentState = State.JUMPING;

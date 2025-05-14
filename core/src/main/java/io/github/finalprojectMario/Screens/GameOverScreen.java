@@ -47,9 +47,11 @@ public class GameOverScreen implements Screen {
     @Override
     public void render(float v) {
         if(Gdx.input.justTouched()){
+            // Creates a new game/ allows for game to restart
             game.setScreen(new PlayScreen((Main) game));
             dispose();
         }
+        // Draw game over screen
         Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.draw();

@@ -80,6 +80,7 @@ public class PlayScreen implements Screen {
 
         world.setContactListener(new WorldContactListener());
 
+        // plays mario music
         music = Main.manager.get("assets/audio/music/mario_music.ogg", Music.class);
         music.setLooping(true);
         music.play();
@@ -111,7 +112,7 @@ public class PlayScreen implements Screen {
 
     public void handleInput(float dt){
         if(player.currentState != Mario.State.DEAD) {
-            // Mario Movement
+            // Mario Movement depending if a certain key is pressed
             if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
                 player.jump();
             }
@@ -139,6 +140,7 @@ public class PlayScreen implements Screen {
                 enemy.b2body.setActive(true);
             }
         }
+
         for(Item item : items){
             item.update(dt);
         }
@@ -188,10 +190,11 @@ public class PlayScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
+        // Adjust window size
         gamePort.update(width, height);
 
     }
-
+    // Checks if mario is dead
     public boolean gameOver(){
         if(player.currentState == Mario.State.DEAD && player.getStateTimer() > 3){
             return true;

@@ -15,6 +15,7 @@ import io.github.finalprojectMario.Sprites.Enemies.Goomba;
 import io.github.finalprojectMario.Sprites.Enemies.Turtle;
 
 public class B2WorldCreator {
+    // Enemies
     private Array<Goomba> goombas;
     private Array<Turtle> turtles;
     public B2WorldCreator(PlayScreen screen){
@@ -56,13 +57,10 @@ public class B2WorldCreator {
         }
         // Create bodies and fixtures in each object/tile on the bricks
         for(MapObject object: map.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)){
-
-
             new Brick(screen, object);
         }
         // Create bodies and fixtures in each object/tile on the coin
         for(MapObject object: map.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)){
-
             new Coin(screen, object);
         }
         // Create all goombas
@@ -71,6 +69,7 @@ public class B2WorldCreator {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
             goombas.add(new Goomba(screen, rect.getX() / Main.PPM, rect.getY() / Main.PPM));
         }
+        // Create all turtles
         turtles = new Array<Turtle>();
         for(MapObject object: map.getLayers().get(7).getObjects().getByType(RectangleMapObject.class)){
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
@@ -84,6 +83,7 @@ public class B2WorldCreator {
     public Array<Turtle> getTurtles(){
         return turtles;
     }
+    // Returns an array with all of the enemies in the map
     public Array<Enemy> getEnemies(){
         Array<Enemy> enemies = new Array<Enemy>();
         enemies.addAll(goombas);

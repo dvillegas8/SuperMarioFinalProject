@@ -18,6 +18,7 @@ import io.github.finalprojectMario.Sprites.Items.Mushroom;
 
 public class Coin extends InteractiveTileObject{
     private static TiledMapTileSet tileSet;
+    // 28 is the ID for a brown square
     private final int BLANK_COIN = 28;
     public Coin(PlayScreen screen, MapObject object){
         super(screen, object);
@@ -28,12 +29,13 @@ public class Coin extends InteractiveTileObject{
     }
 
     @Override
+    // When mario grabs a coin
     public void onHeadHit(Mario mario) {
-        System.out.println("coin");
         if(getCell().getTile().getId() == BLANK_COIN){
             Main.manager.get("assets/audio/sounds/bump.wav", Sound.class).play();
         }
         else{
+            // Spawns a mushroom
             if(object.getProperties().containsKey("mushroom")){
                 screen.spawnItem(new ItemDef(new Vector2(body.getPosition().x,body.getPosition().y + 16 / Main.PPM),
                     Mushroom.class));

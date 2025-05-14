@@ -16,5 +16,10 @@ The run times for a hash map on average is constant time for inserting and looki
 on a given string to get an index. Them you use that index to index into an array and store something there. in the worst
 case scenario, it would be a big o of n (or big o of log n if there is some method used to improve run time) because
 of collisions. Although not implemented into this specific project, I thought I would share since it is something I learned
-from my previous project.
+from my previous project. Furthermore, something that was incorporated into this project and in my previous project is sampling
+from sprite sheets/texture batching. We already know that batching reduces the number of draw calls we have to make to the GPU.
+Using texture coordinates, we are able to choose a specific image from that sprite sheet and only sample that specific image/texture.
+I believe LibGDX automatically does this for us where we do the draw function and it keeps track of all of the coordinates we send
+and eventually batches them and send the draw call. Since we store coordinates with the draw call, our run time is O(1).
+Additionally, once we we send the draw call/batch to the GPU, it is O(n) where n is the number of sprites.
 

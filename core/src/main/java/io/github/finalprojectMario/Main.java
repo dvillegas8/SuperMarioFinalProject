@@ -39,6 +39,7 @@ public class Main extends Game {
     public void create() {
         batch = new SpriteBatch();
         manager = new AssetManager();
+        // Load all sounds into the AssetManager
         manager.load("assets/audio/music/mario_music.ogg", Music.class);
         manager.load("assets/audio/sounds/coin.wav", Sound.class);
         manager.load("assets/audio/sounds/bump.wav", Sound.class);

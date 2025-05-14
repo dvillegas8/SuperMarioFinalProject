@@ -37,6 +37,7 @@ public class Goomba extends Enemy {
 
     public void update(float dt){
         stateTime +=dt;
+        // destroy goomba
         if(setToDestroy && !destroyed){
             world.destroyBody(b2body);
             destroyed = true;
@@ -91,9 +92,11 @@ public class Goomba extends Enemy {
     }
 
     public void onEnemyHit(Enemy enemy){
+        // Gets hit by a moving shell turtle
         if(enemy instanceof Turtle && ((Turtle) enemy).currentState == Turtle.State.MOVING_SHELL){
             setToDestroy = true;
         }
+        // When colliding with a pipe for example
         else{
             reverseVelocity(true, false);
         }
